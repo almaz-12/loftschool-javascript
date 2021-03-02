@@ -63,9 +63,7 @@ function returnFnResult(fn) {
    console.log(f()); // выведет 13
  */
 function returnCounter(number = 0) {
-  function func() {
-    return ++number;
-  }
+  const func = () => ++number;
 
   return func;
 }
@@ -105,7 +103,11 @@ function returnArgumentsArray() {
 
    console.log(newSum()) выведет 6
  */
-function bindFunction(fn, ...args) {}
+function bindFunction(fn, ...args) {
+  const func = () => fn(...args);
+
+  return func;
+}
 
 export {
   returnFirstArgument,
