@@ -17,14 +17,12 @@
    isAllTrue([100, 2, 3, 4, 5], n => n < 10) // вернет false
  */
 function isAllTrue(array, fn) {
-  let result = true;
+  const result = true;
 
-  if (array.constructor !== Array) {
+  if (array.constructor !== Array || !array.length) {
     throw new Error('empty array');
   }
-  if (array.length === 0) {
-    throw new Error('empty array');
-  }
+
   if (typeof fn !== 'function') {
     throw new Error('fn is not a function');
   }
@@ -32,7 +30,7 @@ function isAllTrue(array, fn) {
   for (let i = 0; i < array.length; i++) {
     const element = array[i];
     if (!fn(element)) {
-      result = false;
+      return false;
     }
   }
   return result;
@@ -57,12 +55,10 @@ function isAllTrue(array, fn) {
 function isSomeTrue(array, fn) {
   let result = false;
 
-  if (array.constructor !== Array) {
+  if (array.constructor !== Array || !array.length) {
     throw new Error('empty array');
   }
-  if (array.length === 0) {
-    throw new Error('empty array');
-  }
+
   if (typeof fn !== 'function') {
     throw new Error('fn is not a function');
   }
@@ -88,7 +84,11 @@ function isSomeTrue(array, fn) {
  3.3: Необходимо выбрасывать исключение в случаях:
    - fn не является функцией (с текстом "fn is not a function")
  */
-function returnBadArguments(fn, ...args) {}
+function returnBadArguments(fn, ...args) {
+  if (typeof fn !== 'function') {
+    throw new Error('fn is not a function');
+  }
+}
 
 /*
  Задание 4:
