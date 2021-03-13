@@ -80,9 +80,22 @@ function isSomeTrue(array, fn) {
    - fn не является функцией (с текстом "fn is not a function")
  */
 function returnBadArguments(fn, ...args) {
+  const result = [];
+
   if (typeof fn !== 'function') {
     throw new Error('fn is not a function');
   }
+
+  for (let i = 0; i < args.length; i++) {
+    const element = args[i];
+    try {
+      fn(element);
+    } catch (error) {
+      result.push(element);
+    }
+  }
+
+  return result;
 }
 
 /*
@@ -102,7 +115,49 @@ function returnBadArguments(fn, ...args) {
    - number не является числом (с текстом "number is not a number")
    - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
-function calculator(number = 0) {}
+function calculator(number = 0) {
+  if (!Number.isFinite(number)) {
+    throw new Error('number is not a number');
+  }
+
+  const obj = {
+    sum(...args) {
+      let result = number;
+      for (let i = 0; i < args.length; i++) {
+        result += args[i];
+      }
+
+      return result;
+    },
+    dif(...args) {
+      let result = number;
+      for (let i = 0; i < args.length; i++) {
+        result -= args[i];
+      }
+
+      return result;
+    },
+    div(...args) {
+      let result = number;
+      for (let i = 0; i < args.length; i++) {
+        if (args[i] === 0) {
+          throw new Error('division by 0');
+        }
+        result /= args[i];
+      }
+      return result;
+    },
+    mul(...args) {
+      let result = number;
+      for (let i = 0; i < args.length; i++) {
+        result *= args[i];
+      }
+      return result;
+    },
+  };
+
+  return obj;
+}
 
 /* При решении задач, постарайтесь использовать отладчик */
 
