@@ -43,9 +43,7 @@ function loadTowns() {
   return fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
     .then((response) => response.json())
     .then((towns) =>
-      towns.sort((a, b) => {
-        return a.name.localeCompare(b.name);
-      })
+      towns.sort((a, b) => a.name.localeCompare(b.name))
     );
 }
 
