@@ -42,9 +42,7 @@ const homeworkContainer = document.querySelector('#app');
 function loadTowns() {
   return fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
     .then((response) => response.json())
-    .then((towns) =>
-      towns.sort((a, b) => a.name.localeCompare(b.name))
-    );
+    .then((towns) => towns.sort((a, b) => a.name.localeCompare(b.name)));
 }
 
 /*
@@ -87,15 +85,16 @@ loadingFailedBlock.style.display = 'none';
 filterBlock.style.display = 'none';
 
 function tryLoad() {
-  try {
-    towns = loadTowns();
-    filterBlock.style.display = 'block';
-    loadingBlock.style.display = 'none';
-    loadingFailedBlock.style.display = 'none';
-  } catch (e) {
+  towns = loadTowns();
+  filterBlock.style.display = 'block';
+  loadingBlock.style.display = 'none';
+  loadingFailedBlock.style.display = 'none'; 
+
+  towns.catch(() => {
+    filterBlock.style.display = 'none';
     loadingBlock.style.display = 'none';
     loadingFailedBlock.style.display = 'block';
-  }
+  }); 
 }
 
 retryButton.addEventListener('click', () => {
