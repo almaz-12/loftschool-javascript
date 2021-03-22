@@ -44,8 +44,8 @@ function skipDefault(eventName, target) {
    emulateClick(document.querySelector('a')) // для указанного элемента должно быть симулировано события click
  */
 function emulateClick(target) {
-  skipDefault('click', target);
-  addListener('click', target, () => console.log('emulateClickgit '));
+  const clickEvent = new Event('click');
+  target.dispatchEvent(clickEvent);
 }
 /*
  Задание 6:
@@ -56,8 +56,13 @@ function emulateClick(target) {
  Пример:
    delegate(document.body, () => console.log('кликнули на button')) // добавит такой обработчик кликов для body, который будет вызывать указанную функцию только если кликнули на кнопку (элемент с тегом button)
  */
-function delegate(target, fn) {}
-
+function delegate(target, fn) {
+  target.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') {
+      fn();
+    }
+  });
+}
 /*
  Задание 7:
 
