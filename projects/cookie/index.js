@@ -69,10 +69,8 @@ addButton.addEventListener('click', () => {
 
   if (filterNameInput.value === '') {
     renderTable(getCookie());
-  } else {
-    if (Object.keys(getFilterCookie(filterNameInput.value)).length !== 0) {
-      cookies = getFilterCookie(filterNameInput.value);
-    }
+  } else if (Object.keys(getFilterCookie(filterNameInput.value)).length !== 0) {
+    renderTable(getFilterCookie(filterNameInput.value));
   }
 
   addNameInput.value = '';
@@ -139,15 +137,18 @@ const addRow = (cookieName, cookieValue) => {
   });
 };
 
-let cookies = getCookie();
+const cookies = getCookie();
 
 const renderTable = (cookies) => {
   for (const cookie in cookies) {
-    addRow(cookie, cookies[cookie]);
+    if (cookie !== '' || typeof cookies[cookie] != 'undefined') {
+      addRow(cookie, cookies[cookie]);
+    }
   }
 };
 
 const init = () => {
+  console.log(cookies);
   renderTable(cookies);
 };
 init();
