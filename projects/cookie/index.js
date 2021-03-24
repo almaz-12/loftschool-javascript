@@ -48,10 +48,14 @@ const listTable = homeworkContainer.querySelector('#list-table tbody');
 filterNameInput.addEventListener('input', (e) => {
   listTable.innerHTML = '';
 
-  if (!e.target.value) {
-    cookies = getFilterCookie(e.target.value);
+  // console.log(getFilterCookie(e.target.value));
+  console.log(Object.keys(getFilterCookie(e.target.value)).length === 0);
+
+  if (e.target.value === '') {
+    renderTable(getCookie());
+  } else {
+    renderTable(getFilterCookie(e.target.value));
   }
-  renderTable(cookies);
 });
 
 addButton.addEventListener('click', () => {
@@ -62,7 +66,14 @@ addButton.addEventListener('click', () => {
 
   document.cookie = `${addNameInput.value}=${addValueInput.value}`;
   listTable.innerHTML = '';
-  renderTable(cookies);
+
+  if (filterNameInput.value === '') {
+    renderTable(getCookie());
+  } else {
+    if (Object.keys(getFilterCookie(filterNameInput.value)).length !== 0) {
+      cookies = getFilterCookie(filterNameInput.value);
+    }
+  }
 
   addNameInput.value = '';
   addValueInput.value = '';
