@@ -72,9 +72,6 @@ addButton.addEventListener('click', () => {
   } else if (Object.keys(getFilterCookie(filterNameInput.value)).length !== 0) {
     renderTable(getFilterCookie(filterNameInput.value));
   }
-
-  addNameInput.value = '';
-  addValueInput.value = '';
 });
 
 function isMatching(full, chunk) {
