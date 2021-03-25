@@ -48,9 +48,6 @@ const listTable = homeworkContainer.querySelector('#list-table tbody');
 filterNameInput.addEventListener('input', (e) => {
   listTable.innerHTML = '';
 
-  // console.log(getFilterCookie(e.target.value));
-  console.log(Object.keys(getFilterCookie(e.target.value)).length === 0);
-
   if (e.target.value === '') {
     renderTable(getCookie());
   } else {
@@ -145,7 +142,6 @@ const renderTable = (cookies) => {
 };
 
 const init = () => {
-  console.log(cookies);
   renderTable(cookies);
 };
 init();
