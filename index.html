@@ -1,0 +1,178 @@
+<style>
+    html, body, #map {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    .form {
+        width: 300px;
+    }
+
+    .form .field {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .form .field input,
+    .form .field textarea {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form .field textarea {
+        resize: none;
+    }
+    .form .review-list {
+        max-height: 400px;
+        overflow: scroll;
+    }
+</style>
+
+<div id="map"></div>
+
+<script>
+    
+let storage = localStorage;
+let getData = () => { 
+    return JSON.parse(storage.reviews || '{}');
+};
+
+function loadScript() {
+    return new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src =
+            'https://api-maps.yandex.ru/2.1/?lang=ru_RU';
+        document.body.appendChild(script);
+        script.addEventListener('load', resolve);
+        }).then((resolve) => ymaps.ready(resolve));
+}
+loadScript().then(() => {
+    let clusterer = new ymaps.Clusterer({
+        groupByCoordinates: true,
+        clusterDisableClickZoom: true,
+        clusterOpenBalloonOnClick: false,
+    }),
+    map = new ymaps.Map("map", {
+        center: [55.793617576635015,49.11371041015617],
+        zoom: 12,
+    }),
+    data = getData();
+    map.geoObjects.add(clusterer);      
+
+    const createPlacemark = (coords) => {
+        const placemark = new ymaps.Placemark(coords);
+        placemark.events.add('click', (e) => {
+            const coords = e.get('target').geometry.getCoordinates();
+            getBalloon(coords);
+        });
+        clusterer.add(placemark);            
+        // map.geoObjects.add(placemark);
+    };
+
+    for (let item in data) {
+        for (let i = 0; i < data[item].length; i++) {
+            createPlacemark(item.split(','));
+        }            
+    }
+
+    const getReviewsByCoords = (coords) => {
+        return data[`${coords[0]},${coords[1]}`] || [];
+    }
+
+    const getBalloon = (coords) => {
+        const form = createForm(coords, getReviewsByCoords(coords));
+        map.balloon.open(coords, form.innerHTML);
+    }
+
+    map.events.add('click', (e) => {
+            const coords = e.get('coords');
+            getBalloon(coords);
+        }
+    );
+
+    clusterer.events.add('click', (e) => {
+        const coords = e.get('target').geometry.getCoordinates();
+        console.log(coords);
+        getBalloon(coords);
+    });        
+
+    // const placemark = new ymaps.Placemark([55.773013009602955,49.10890389160149]);            
+    // map.geoObjects.add(placemark);
+
+
+    document.body.addEventListener('click', (e) => {
+        if (e.target.id === 'addReview') {
+            const addForm = document.querySelector('#addForm');
+            const coords = JSON.parse(addForm.dataset.coords);
+
+            setStorage(coords);
+            createPlacemark(coords);
+            map.balloon.close();
+        }
+    });
+});  
+
+const getFormTemplate = () => {
+    return `<div id="reviews"></div>
+        <div id="addForm">
+            <h3>Отзыв:</h3>
+            <p class="field">
+                <input id="name" type="text" placeholder="Укажите ваше имя">
+            </p>
+            <p class="field">
+                <input id="place" type="text" placeholder="Укажите место">
+            </p>
+            <p class="field">
+                <textarea id="review" placeholder="Оставьте отзыв" rows="5"></textarea>
+            </p>
+    
+            <button id="addReview">Добавить</button>
+        </div>`;
+}   
+const setStorage = (coords) => {
+    const nameReview = document.querySelector('#name').value;
+    const placeReview = document.querySelector('#place').value;
+    const textReview = document.querySelector('#review').value;
+
+    let data = JSON.parse(storage.reviews || '{}');
+    let reviewObj = {
+        name: nameReview,
+        place: placeReview,
+        review: textReview
+    };
+    let i = `${coords[0]},${coords[1]}`;
+
+    data[i] = data[i] || [];
+    data[i].push(reviewObj);
+
+    storage.setItem('reviews',JSON.stringify(data));
+};
+
+function createForm(coords, reviews) {
+    const container = document.createElement('div');
+    container.innerHTML = getFormTemplate();
+    const reviewList = container.querySelector('#reviews');
+    const reviewForm = container.querySelector('#addForm');
+    reviewForm.dataset.coords = JSON.stringify(coords);
+
+    for (const item in reviews) {
+        console.log(item);
+        const element = reviews[item];
+
+        const div = document.createElement('div');
+        div.classList.add('review-item');
+        div.innerHTML = `
+        <div>
+        <b>${element.name}</b> [${element.place}]
+        </div>
+        <div>${element.review}</div>
+        `;
+        reviewList.appendChild(div);      
+    }
+
+    return container;
+}
+
+</script>
