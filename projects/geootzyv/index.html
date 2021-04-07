@@ -47,14 +47,10 @@ ymaps.ready(function () {
         center: [55.793617576635015,49.11371041015617],
         zoom: 12,
     });
-    let clusterer = new ymaps.Clusterer({      
-        clusterBalloonPanelMaxMapArea: 0,
-        clusterBalloonPagerSize: 10,     
+    let clusterer = new ymaps.Clusterer({   
         groupByCoordinates: false,
-
         clusterDisableClickZoom: true,
-        clusterHideIconOnBalloonOpen: false,
-        geoObjectHideIconOnBalloonOpen: false
+        clusterOpenBalloonOnClick: false,
     }),    
     data = getData();
     map.geoObjects.add(clusterer);      
@@ -92,6 +88,7 @@ ymaps.ready(function () {
 
     clusterer.events.add('click', (e) => {
         const coords = e.get('target').geometry.getCoordinates();
+        console.log(coords);
         getBalloon(coords);
     });        
 
