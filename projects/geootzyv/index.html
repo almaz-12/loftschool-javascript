@@ -101,10 +101,11 @@ ymaps.ready(function () {
         if (e.target.id === 'addReview') {
             const addForm = document.querySelector('#addForm');
             const coords = JSON.parse(addForm.dataset.coords);
-            setStorage(coords);
-            data = getData();
-            createPlacemark(coords);
-            map.balloon.close();
+            if(setStorage(coords)) {
+                data = getData();
+                createPlacemark(coords);
+                map.balloon.close();
+            }            
         } else if(e.target.id === "openBalloon") {
             e.preventDefault();
             const coords = JSON.parse(e.target.dataset.coords);
@@ -122,6 +123,11 @@ const setStorage = (coords) => {
     const nameReview = document.querySelector('#name').value;
     const placeReview = document.querySelector('#place').value;
     const textReview = document.querySelector('#review').value;
+
+    if(nameReview == '' || placeReview == '' || textReview == '') {
+        alert('Все поля должны быть заполнены');
+        return false;
+    }
 
     let data = JSON.parse(storage.reviews || '{}');
     let reviewObj = {
